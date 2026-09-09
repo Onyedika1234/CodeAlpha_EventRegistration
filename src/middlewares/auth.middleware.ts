@@ -1,0 +1,110 @@
+import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
+import prisma from "../utils/prisma.ts";
+import { Request, Response, NextFunction } from "express";
+dotenv.config();
+
+// Authentication Middleware
+export const authorize = (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const token = req.cookies.token;
+
+    if (!token) {
+      //   const err = new Error("Unauthorized: No token provided");
+      //   err.statusCode = 401;
+      //   throw err;
+      res.status(401).json("Unauthorized: No toke provided");
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    // req.user = decoded;
+
+    next();
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Internal Server Error" });
+  }
+};
+
+export const rbac = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const id = req.cookies.userId;
+
+    if (!id) res.status(401).json({ success: false, message: "Unauthorized" });
+
+    const user: any = await prisma.user.findUnique({
+      where: { id },
+      select: { role: true },
+    });
+
+    if (!user)
+      res.status(401).json({ success: false, message: "Unauthorized" });
+
+    if (user.role === "ORGANIZER") {
+      next();
+    } else {
+      res.status(401).json({
+        success: false,
+        message: "This ability is only accessed by organizers",
+      });
+    }
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Internal Server Error" });
+  }
+};
+
+// export const candidaterbac = async (
+//   req: Request,
+//   res: Response,
+//   next: NextFunction,
+// ) => {
+//   try {
+//     const candidateId = req.cookies.candidateId;
+
+//     if (!candidateId)
+//       res.status(401).json({ success: false, message: "Unauthorized" });
+
+//     const candidate: any = await prisma.candidate.findUnique({
+//       where: { id: candidateId },
+//     });
+
+//     if (!candidate)
+//       res.status(404).json({
+//         success: false,
+//         message:
+//           "Candidate profile not found, This ability is only accessed by candidates",
+//       });
+
+//     next();
+//   } catch (error) {
+//     res.status(500).json({ success: false, message: "Internal Server Error" });
+//   }
+// };
+
+// //this is used to check if this is the particular employer that posted the job
+
+export const authroizeOrganizer = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { userId } = req.cookies;
+    const { id }: any = req.params; // Event Id
+
+    const event = await prisma.event.findUnique({
+      where: { id },
+    });
+
+    if (!event)
+      res.status(404).json({ success: false, message: "Job not found." });
+
+    if (event?.organizerId !== userId) {
+      res.status(401).json({ success: false, message: "Unauthorized" });
+    }
+
+    next();
+  } catch (error) {
+    res.status(500).json({ success: false, message: `${error}` });
+  }
+};

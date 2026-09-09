@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { signUpDto, loginDto } from "../utils/dtos.ts";
+import { signUpDto, loginDto, eventDto } from "../utils/dtos.ts";
 
 //Validation of Signup data
 export const validateSignUp = (
@@ -55,5 +55,39 @@ export const validateLogin = (
   }
   email = email.trim();
   password = password.trim();
+  next();
+};
+
+export const validateEvent = (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): void => {
+  let { title, description, capacity, location, date } = eventDto(req.body);
+
+  if (!title || !description || !capacity || !location || !date) {
+    res
+      .status(400)
+      .json({ success: false, message: "Some Parameters are missing" });
+  }
+
+  if (
+    typeof title !== "string" ||
+    typeof description !== "string" ||
+    typeof capacity !== "number" ||
+    typeof location !== "string" ||
+    typeof date !== "string"
+  ) {
+    res.status(422).json({
+      success: false,
+      message: "Parameters are of the wrong data type",
+    });
+  }
+
+  title = title.trim();
+  description = description.trim();
+  location = location.trim();
+  date = date.trim();
+
   next();
 };
