@@ -52,7 +52,8 @@ export const AnyNull = runtime.AnyNull
 
 export const ModelName = {
   User: 'User',
-  Event: 'Event'
+  Event: 'Event',
+  Registration: 'Registration'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -88,6 +89,7 @@ export const EventScalarFieldEnum = {
   title: 'title',
   description: 'description',
   capacity: 'capacity',
+  registeredUsers: 'registeredUsers',
   location: 'location',
   date: 'date',
   organizerId: 'organizerId',
@@ -95,6 +97,17 @@ export const EventScalarFieldEnum = {
 } as const
 
 export type EventScalarFieldEnum = (typeof EventScalarFieldEnum)[keyof typeof EventScalarFieldEnum]
+
+
+export const RegistrationScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  eventId: 'eventId',
+  status: 'status',
+  createdAt: 'createdAt'
+} as const
+
+export type RegistrationScalarFieldEnum = (typeof RegistrationScalarFieldEnum)[keyof typeof RegistrationScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -125,4 +138,13 @@ export const EventOrderByRelevanceFieldEnum = {
 } as const
 
 export type EventOrderByRelevanceFieldEnum = (typeof EventOrderByRelevanceFieldEnum)[keyof typeof EventOrderByRelevanceFieldEnum]
+
+
+export const RegistrationOrderByRelevanceFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  eventId: 'eventId'
+} as const
+
+export type RegistrationOrderByRelevanceFieldEnum = (typeof RegistrationOrderByRelevanceFieldEnum)[keyof typeof RegistrationOrderByRelevanceFieldEnum]
 

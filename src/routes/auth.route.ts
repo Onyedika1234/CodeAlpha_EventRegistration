@@ -12,7 +12,7 @@ const authRouter: Router = express.Router();
 authRouter.post("/sign-up", authLimit, validateSignUp, signUp);
 
 //login
-authRouter.post("/login", authLimit, validateLogin, Login);
+authRouter.post("/login", validateLogin, Login);
 
 //Logout
 authRouter.post("/logout", authLimit, Logout);

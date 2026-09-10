@@ -80,9 +80,10 @@ export const Login = async (req: Request, res: Response) => {
         message: "User not found, Create new account",
       });
 
-    const passwordMatches = bcrypt.compare(password, user.password);
+    const passwordMatches = await bcrypt.compare(password, user.password);
 
-    if (!passwordMatches) res.status(400).json("Invalid Password");
+    if (!passwordMatches)
+      res.status(400).json({ success: false, message: "Invalid Password" });
 
     const token = jwt.sign(
       { id: user.id, email: user.email },

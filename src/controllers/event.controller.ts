@@ -39,11 +39,13 @@ export const getEvents = async (req: Request, res: Response): Promise<void> => {
       where: {
         title: { contains: title },
       },
+      include: { registrations: true },
     });
 
-    res
-      .status(200)
-      .json({ success: true, events: events.map((event) => eventDto(event)) });
+    // res
+    //   .status(200)
+    //   .json({ success: true, events: events.map((event) => eventDto(event)) });
+    res.status(200).json({ success: true, events });
   } catch (error) {
     res.status(500).json({ success: false, message: "Internal Server Error" });
   }
@@ -53,7 +55,10 @@ export const getEvent = async (req: Request, res: Response) => {
   try {
     const { id }: any = req.params; //Event Id
 
-    const event = await prisma.event.findUnique({ where: { id } });
+    const event = await prisma.event.findUnique({
+      where: { id },
+      include: { registrations: true },
+    });
 
     if (!event)
       res.status(404).json({ success: false, message: "Event Not Found" });

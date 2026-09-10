@@ -11,6 +11,7 @@ import {
   getEvent,
   getEvents,
 } from "../controllers/event.controller.ts";
+import { registerEvent } from "../controllers/registration.controller.ts";
 
 const eventRouter: Router = express.Router();
 
@@ -31,5 +32,9 @@ eventRouter.put(
   validateEvent,
   editEvent,
 );
+
+//Register
+
+eventRouter.post("/:id/register", authorize, registerEvent);
 
 export default eventRouter;
